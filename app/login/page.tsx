@@ -1,8 +1,11 @@
 "use client"
-import Image from "next/image"
-import { useState } from "react"
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const Login = () => {
+
+    const router = useRouter();
 
     const [inputs, setInputs] = useState({
         username:"",
@@ -13,9 +16,21 @@ const Login = () => {
         setInputs(prev => ({ ...prev, [event.target.name]: event.target.value }));        
     }
     const handleSubmit = async (event: any) => {
-        event.preventdefault();
+        event.preventDefault();
 
-        
+        const response = await fetch("/api/login", {
+            method: "POST",
+            body: JSON.stringify({
+                username: inputs.username,
+                password: inputs.password,
+            })
+        })        
+
+        if (response.ok) {
+            router.push("/");                       
+        } else {
+            router.push("/login");            
+        }
     }
 
     return (
@@ -34,8 +49,8 @@ const Login = () => {
 
             <div className="flex flex-col items-center justify-center pt-5">
                 <div className="flex flex-col gap-5 w-100">
-                    <input className=" border-b-2" type="text" placeholder="Username" onChange={handleChange}/>
-                    <input className=" border-b-2" type="password" placeholder="Password" onChange={handleChange}/>
+                    <input className=" border-b-2" name="username" type="text" placeholder="Username" onChange={handleChange}/>
+                    <input className=" border-b-2" name="password" type="password" placeholder="Password" onChange={handleChange}/>
 
                     <button className="btn" onClick={handleSubmit}>Login</button>
                 </div>
