@@ -1,7 +1,9 @@
 "use client"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/authContext"
+
 
 const Login = () => {
 
@@ -12,9 +14,12 @@ const Login = () => {
         password:"",
     });
 
+    const {login} = useContext(AuthContext);
+
     const handleChange = (event: any) => {
         setInputs(prev => ({ ...prev, [event.target.name]: event.target.value }));        
     }
+    
     const handleSubmit = async (event: any) => {
         event.preventDefault();
 
@@ -54,9 +59,7 @@ const Login = () => {
 
                     <button className="btn" onClick={handleSubmit}>Login</button>
                 </div>
-            </div>
-
-            
+            </div>   
         </section>            
     )
 }

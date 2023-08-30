@@ -1,26 +1,24 @@
-import { json } from "stream/consumers";
-import {db} from "../../../utils/database";
+import {query} from "../../../utils/database";
 
-export const POST = async (req) => {
+export const POST = async (req, res) => {
+
     const inputs = await req.json();
+    
+    // Checking user
+    const q = "SELECT * FROM users WHERE username = ?";
 
-    try {
-        await db.connect();
+    const data = await query({
+        query: q,
+        values: [inputs.username],
+    });
 
-        await db.query("select * from users where username = ?", inputs.username, (err, data) => {
-            if (err) return new Response(JSON.stringify(err), { status: 501 });
-            
-            if (data[0].password === inputs.password) {
-                return new Response(JSON.stringify("logged in"), { status: 201 });               
-            } else {
-                return new Response(JSON.stringify("Mismatch!"), { status: 501 });                
-            }
-        })        
+    if (data.length === 0) console.log("No user");
 
-        await db.end();
-        return new Response(JSON.stringify(results), { status: 201 });       
-        
-    } catch (error) {
-        return new Response("Failed to create a new prompt", { status:500 })        
+    if (data[0].password === inputs.password) {
+        console.log("Correct");        
+    } else {
+        console.log("Invalid");
     }
+
+    return new Response({ status:200 });    
 } 
